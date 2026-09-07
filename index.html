@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Морской бой: 10x10</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style type="text/css">
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .legend {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        .box {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+            border: 1px solid #6f42c1;
+            background-color: white;
+        }
+
+        .cell {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .cell:hover {
+            background-color: #f1f1f1;
+        }
+        .header-box {
+            border: none;
+            font-weight: bold;
+            color: #6f42c1;
+            cursor: default;
+        }
+        .game-board {
+            display: inline-block;
+            margin-top: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .row {
+            margin: 0;
+            flex-wrap: nowrap;
+        }
+        
+        .ship-4 { background-color: #800080 !important; cursor: default; }
+        .ship-3 { background-color: #008000 !important; cursor: default; }
+        .ship-2 { background-color: #0000FF !important; cursor: default; }
+        .ship-1 { background-color: #FFD700 !important; cursor: default; }
+        
+        .miss {
+            cursor: default;
+        }
+        .miss::after {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background-color: #dc3545;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center" id="game-container">
+        <h2 class="mt-3 font-weight-bold">Морской бой!</h2>
+        
+        <div class="legend d-flex justify-content-center gap-4 flex-wrap mt-3">
+            <div id="legend-4" style="color: #800080; margin-right: 15px;">Корабль (4 клетки) - 1</div>
+            <div id="legend-3" style="color: #008000; margin-right: 15px;">Корабли (3 клетки) - 2</div>
+            <div id="legend-2" style="color: #0000FF; margin-right: 15px;">Корабли (2 клетки) - 2</div>
+            <div id="legend-1" style="color: #FFD700;">Корабли (1 клетка) - 3</div>
+        </div>
+
+        <h4 class="text-secondary mt-3">
+            Попадания: <span class="score text-success font-weight-bold">0</span>/17 
+        </h4>
+        
+        <div class="game-board">
+            <!-- Шапка с цифрами 1-10 -->
+            <div class="row">
+                <div class="box header-box"></div>
+                <div class="box header-box">1</div>
+                <div class="box header-box">2</div>
+                <div class="box header-box">3</div>
+                <div class="box header-box">4</div>
+                <div class="box header-box">5</div>
+                <div class="box header-box">6</div>
+                <div class="box header-box">7</div>
+                <div class="box header-box">8</div>
+                <div class="box header-box">9</div>
+                <div class="box header-box">10</div>
+            </div>
+            
+            <!-- Строка A -->
+            <div class="row">
+                <div class="box header-box">A</div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="ship-2"></div>
+                <div class="box cell" data-type="ship-2"></div>
+            </div>
+            
+            <!-- Строка B -->
+            <div class="row">
+                <div class="box header-box">B</div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="ship-3"></div>
+                <div class="box cell" data-type="ship-3"></div>
+                <div class="box cell" data-type="ship-3"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+            </div>
+            
+            <!-- Строка C -->
+            <div class="row">
+                <div class="box header-box">C</div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+            </div>
+            
+            <!-- Строка D -->
+            <div class="row">
+                <div class="box header-box">D</div>
+                <div class="box cell" data-type="ship-1"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="ship-4"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+            </div>
+            
+            <!-- Строка E -->
+            <div class="row">
+                <div class="box header-box">E</div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="ship-2"></div>
+                <div class="box cell" data-type="ship-2"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="ship-4"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="ship-1"></div>
+            </div>
+            
+            <!-- Строка F -->
+            <div class="row">
+                <div class="box header-box">F</div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="ship-4"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+            </div>
+
+            <!-- Строка G -->
+            <div class="row">
+                <div class="box header-box">G</div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="ship-4"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+            </div>
+
+            <!-- Строка H -->
+            <div class="row">
+                <div class="box header-box">H</div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="ship-3"></div>
+                <div class="box cell" data-type="ship-3"></div>
+                <div class="box cell" data-type="ship-3"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+            </div>
+
+            <!-- Строка I -->
+            <div class="row">
+                <div class="box header-box">I</div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+            </div>
+
+            <!-- Строка J -->
+            <div class="row">
+                <div class="box header-box">J</div>
+                <div class="box cell" data-type="ship-1"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div> 
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+                <div class="box cell" data-type="miss"></div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    let score = 0;
+    let maxScore = 17; 
+    
+    let score_block = document.querySelector(".score");
+    let cells = document.querySelectorAll(".cell");
+
+    cells.forEach(function(cell) {
+        cell.onclick = function() {
+            let type = this.dataset.type; 
+            
+            if (this.classList.contains(type)) return;
+            
+            this.classList.add(type);
+            this.classList.remove("cell"); 
+            this.onclick = null;
+
+            if (type !== "miss") {
+                score++;
+                score_block.innerHTML = score;
+
+
+                let totalShipCells = document.querySelectorAll(`[data-type="${type}"]`).length;
+                let openedShipCells = document.querySelectorAll(`.${type}`).length;
+
+                if (openedShipCells === totalShipCells) {
+
+                    let shipSize = type.replace("ship-", "");
+                    let legendItem = document.getElementById(`legend-${shipSize}`);
+                    if (legendItem) {
+                        legendItem.style.textDecoration = "line-through";
+                    }
+                }
+                
+                if (score >= maxScore) {
+                    setTimeout(function() {
+                        alert("Победа!");
+                    }, 100);
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
